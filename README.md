@@ -174,6 +174,16 @@ For the first image, the model is pretty sure that this is a General caution sig
 | 4.8186561e-08	      	| Wild animals crossing	 			        	|
 | 3.7624989e-08		    | Right-of-way at the next intersection        	|
 
+
+#### Room for improvement.
+
+- The deep learning model can be fed with even more no of data samples for training so that the model can generalize well on any country's traffic signal sign data.
+
+- Validation set can be added with different distribution so that validation accuracy will be a good parameter to judge the performance on the unseen test dataset.
+
+- overfitting can be overcame by using even lighter model architecture.
+
+
 <!-- 
 
 For the second image ... 
