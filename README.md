@@ -16,11 +16,11 @@ The goals / steps of this project are the following:
 [image1]: ./examples/visualization.png "Visualization"
 [image2]: ./examples/grayscale.jpg "Grayscaling"
 [image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[image4]: ./fromweb/General_caution.jpg "Traffic Sign 1"
+[image5]: ./fromweb/road_work.jpg "Traffic Sign 2"
+[image6]: ./fromweb/speed_breaker.jpg "Traffic Sign 3"
+[image7]: ./fromweb/stop.jpg "Traffic Sign 4"
+[image8]: ./fromweb/yield.jpg "Traffic Sign 5"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -57,6 +57,8 @@ As a first step, I decided to normalize the images to using `cv2.normalize` meth
 
 Later, normalized RGB channel image is converted to grayscale before it is used for training.
 
+Preprocessed image size will be `(32,32,1)`
+
 <!-- ![alt text][image2] -->
 
 <!--
@@ -80,29 +82,43 @@ My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
+| Input         		| 32x32x1 Grayscale image   					| 
+| Convolution 5x5     	| 2x2 stride, same padding, outputs 32x32x6 	|
+| tanh activation		|												|
+| Average pooling	   	| 2x2 stride, valid padding, outputs 16x16x6	|
+| Convolution 5x5	    | 1x1 stride, valid padding, outputs 12x12x6  	|
+| tanh activation		|												|
+| Flatten layer 	   	| output shape 576 1D                          	|
+| Dense layer1 (120)   	| output shape 120 1D      						|
+| tanh activation		|												|
+| Dense layer2 (84)   	| output shape 84 1D      						|
+| tanh activation		|												|
+| Dense layer3 (43)   	| output shape 43 1D      						|
+| Softmax				|           									|
  
+`Total params: 85,631`
+
+`Trainable params: 85,631`
+
+`Non-trainable params: 0`
 
 
-#### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+#### 3. Training the deep learning model.
 
-To train the model, I used an ....
+To train the model, I used `adam optimizer` with `categorical_crossentropy` loss function. Model is trained for `20` epochs.
 
-#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+Tensorboard callback is included in training for the visualization of the model architecture and the training progress.
+
+Preprocessed validation set is included in the model training progress.
+
+#### 4. The discussed model architecture gave the training accuracy more than 99% and a validation accuracy more than 93% which is fair enough to do the given task.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of `0.9959`
+* validation set accuracy of `0.9311`
+* test set accuracy of `0.9244`
 
+<!-- 
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
 * What were some problems with the initial architecture?
@@ -110,56 +126,60 @@ If an iterative approach was chosen:
 * Which parameters were tuned? How were they adjusted and why?
 * What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+-->
 
+Modified Lenet architecture was chosen and implemented in TensorFlow 2.x
+As you can refer from the above given details this architecture did a pretty good job at validation set as well as the test set which can be a proof to believe it will perform fairly on the unseen data given that same preprocessing steps where used before the prediction process.
+ 
 ### Test a Model on New Images
 
-#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
-
-Here are five German traffic signs that I found on the web:
+#### 1. following five German traffic signs found on the web is gonna be used for the prediction.
 
 ![alt text][image4] ![alt text][image5] ![alt text][image6] 
 ![alt text][image7] ![alt text][image8]
 
+<!--
 The first image might be difficult to classify because ...
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+
+-->
+
+#### 2. Results summary
 
 Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| General_caution      	| General_caution   							| 
+| road_work     		| road_work 							    	|
+| Bumpy Road			| Bumpy Road									|
+| stop	        		| stop					 			        	|
+| yield		        	| yield      						        	|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy on the test set of `92.44%`
 
-#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+#### 3. Top 5 probabilities for the prediction on the single image.
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making prediction with top 5 probabilities on my final model is located in the last but one code cell of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is pretty sure that this is a General caution sign (probability of 0.9), and the image does contain a General caution sign. The top five soft max probabilities were
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| 9.9999321e-01  		| General caution   							| 
+| 6.2955587e-06     	| Traffic signals								|
+| 3.3307344e-07			| Pedestrians									|
+| 4.8186561e-08	      	| Wild animals crossing	 			        	|
+| 3.7624989e-08		    | Right-of-way at the next intersection        	|
 
+<!-- 
 
 For the second image ... 
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 #### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
 
+-->
 
